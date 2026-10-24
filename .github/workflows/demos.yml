@@ -1,0 +1,25 @@
+name: Demos
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest   # Docker ist auf GitHub-gehosteten Ubuntu-Runnern vorinstalliert
+    strategy:
+      matrix:
+        project: [mockito-demo, testcontainers-demo, s3-demo]
+    defaults:
+      run:
+        working-directory: ${{ matrix.project }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Build und Tests (inkl. Integrationstests)
+        run: mvn -B verify
